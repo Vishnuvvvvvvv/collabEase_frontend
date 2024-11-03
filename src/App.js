@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
-
+import 'regenerator-runtime/runtime'
+import RoomPage from './RoomPage'
+import React,{useEffect,useState} from "react";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import IntroductionPage from './Components/IntroductionPage/IntroductionPage';
+import JoinRoomPage from './Components/JoinRoomContent/JoinRoomPage';
+import userContext from './Components/userContext';
+import * as wss from "../src/utils/wss"
+import "./Components/IntroductionPage/IntroductionPage.css"
 function App() {
+  //global variables
+  const[isRoomHost,setIsRoomHost] = useState(false)
+  const[onlyWithAudio,setConnectOnlyWithAudio] = useState()
+  const[identity,setIdentity] = useState("")
+  const[roomId,setRoomId] = useState(null)
+  const[participants,setParticipants] = useState([]) 
+  const[socketId,setSocketId] = useState(null)
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStreams, setRemoteStreams] = useState([]);
+  useEffect(()=>{
+
+    wss.connectWithSocketIOServer({setLocalStream ,setRemoteStreams,isRoomHost, setIsRoomHost, identity, setIdentity, roomId, setRoomId, participants, setParticipants, socketId, setSocketId });
+  
+  }, []);
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    <userContext.Provider value={{setLocalStream ,setRemoteStreams ,isRoomHost,setIsRoomHost,identity,setIdentity,roomId,setRoomId,participants,setParticipants,socketId,setSocketId}}>
+    <Router>
+      <Routes>
+      <Route path="/join-room"
+            element  ={<JoinRoomPage />}
+        />
+        <Route path="/room"
+        element  ={<RoomPage />} />
+       
+        <Route path="/"
+        element={ <IntroductionPage />} />
+      
+     </Routes>
+    </Router>
+    </userContext.Provider>
+  )
 }
 
-export default App;
+export default App

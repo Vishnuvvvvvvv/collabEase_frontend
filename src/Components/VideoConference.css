@@ -1,0 +1,215 @@
+.videoConference{
+    height: 98%;
+    width: 98%;
+    border: 1px solid #949494;
+    /* background: #D4E6CC; */
+    background: #0d0e0d;
+    margin-left: 1%;
+    border-radius: 8px;
+    margin-top: 0.6%;
+    margin-bottom: 1%;
+
+}
+
+.videoElement{
+    background-color: #353535;
+    width: 32.3%;
+    margin-right: 1%;
+    border-radius: 6px;
+    position: relative;
+}
+
+.videoElement1{
+  background-color: #353535;
+  width: 83%;
+  height: 92%;
+  /* margin-right: 1%; */
+  margin-left: 7%;
+  margin-top: 3%;
+  border-radius: 7px;
+}
+
+.videoElementText{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.section1{
+    height: 48%;
+    margin-top: 0.7%;
+    margin-left: 1%;
+    /* margin-right: 1%; */
+    /* border-radius: 6px; */
+    /* border: 1px solid black; */
+    display: flex;
+}
+
+.section2{
+    height: 48%;
+    margin-top: 1%;
+    margin-left: 1%;
+    /* margin-right: 1%; */
+    /* border-radius: 6px;
+    border: 1px solid black; */
+    display: flex;
+    margin-bottom: 1%;
+}
+
+.section{
+    height: 100%;
+}
+
+.main-container{
+    height: 100%;
+}
+
+.video-container{
+    height: 100%;
+}
+
+.btn-vc1{
+    background: #000000;
+    border: 1px solid white;
+    /* margin-left: 25%; */
+    border-radius: 8px;
+    padding: 3px;
+    font-family: cursive;
+    width: 64px;
+    color: #8d8686;
+    margin-left: 45%;
+    margin-right: 60px;
+}
+
+.btn-vc2{
+    background: #000000;
+    border: 1px solid white;
+    /* margin-left: 25%; */
+    border-radius: 8px;
+    padding: 3px;
+    font-family: cursive;
+    width: 64px;
+    color: #8d8686;
+    /* margin-left: 60%;*/
+}
+
+.videos_portal_styles {
+  margin-left: 1%;
+  width: 73%;
+  height: 88vh;
+  left: 0;
+  top: 10.6%;
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #000000;
+}
+
+.video_track_container:first-child:nth-last-child(1) {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: #353535;
+  border-radius: 7px;
+}
+
+.video_track_container:first-child:nth-last-child(2),
+.video_track_container:first-child:nth-last-child(2) ~ .video_track_container {
+  width: 50%;
+  height: 50%;
+  position: relative;
+  border-radius: 7px;
+}
+
+.video_track_container:first-child:nth-last-child(3),
+.video_track_container:first-child:nth-last-child(3) ~ .video_track_container {
+  width: 50%;
+  height: 50%;
+  position: relative;
+  border-radius: 7px;
+}
+
+.video_track_container:first-child:nth-last-child(4),
+.video_track_container:first-child:nth-last-child(4) ~ .video_track_container {
+  width: 50%;
+  height: 50%;
+  position: relative;
+  border-radius: 7px;
+}
+
+
+.video_track_container:first-child:nth-last-child(5),
+.video_track_container:first-child:nth-last-child(5) ~ .video_track_container {
+  width: 33%;
+  height: 33%;
+  position: relative;
+  border-radius: 7px;
+}
+
+.video_track_container:first-child:nth-last-child(6),
+.video_track_container:first-child:nth-last-child(6) ~ .video_track_container {
+  width: 33%;
+  height: 33%;
+  border-radius: 7px;
+}
+
+
+
+/* buttons */
+
+
+.video_buttons_container {
+  width: 58%;
+  height: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 7%;
+  bottom: 0;
+  background: linear-gradient(168.68deg, rgba(96, 96, 96, 0.5) 1.12%, rgba(113, 112, 112, 0.5) 100%);
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  z-index: 3;
+}
+
+.video_button_container {
+  margin-left: 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.video_button_image {
+  height: 80%;
+  padding: 10px;
+  border-radius: 25px;
+  transition: 0.3s;
+  background: rgb(0, 0, 5);
+  border: 1px solid white;
+}
+
+.video_button_image:hover {
+  background: rgb(133, 133, 135);
+  padding: 10px;
+  border-radius: 25px;
+  
+}
+
+.video_button_end {
+  width: 164px;
+    height: 40px;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: fangsong;
+    border-radius: 11px;
+    border: none;
+    color: white;
+    background: #181717;
+    box-shadow: 0px 3px 30px rgba(252, 93, 91, 0.1);
+    transition: 0.2s;
+    border: 1px solid white;
+}
+
+.video_button_end:hover {
+  background: red;
+}

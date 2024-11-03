@@ -1,0 +1,78 @@
+.IntroductionPage{
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: black; */
+}
+.animation-landing-page{
+    width: 50px;
+    height: 80px;
+}
+.connecting_buttons_container{
+    width: 30%;
+    height: 56%;
+    border: 1px solid blue;
+    border-radius: 8px;
+    text-align: center;
+    /* margin-left: 28%; */
+    /* display: flex; */
+    /* flex-direction: column; */
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    padding-bottom: 24px;
+    z-index: 2;
+
+}
+.create_room_button{
+    width: 80%;
+    height: 7vh;
+    border-radius: 7px;
+    font-size: larger;
+    font-family: cursive;
+    border: 1px solid blue;
+    margin-bottom: 35px;
+    background: rgb(208 214 255 / 50%);
+
+
+
+}
+
+.join_room_button{
+    /* width: 80%;
+    height: 7vh;
+    border-radius: 7px;
+    font-size: larger;
+    font-family: cursive;
+    border: 1px solid blue;
+    margin-bottom: 35px;
+    background: rgb(208 214 255 / 50%); */
+    width: 80%;
+    height: 7vh;
+    border-radius: 7px;
+    font-size: larger;
+    font-family: cursive;
+    border: 1px solid blue;
+    margin-bottom: 67px;
+    margin-top: 13%;
+    background: rgb(208 214 255 / 50%);
+}
+
+.logo2{
+    width: 118px;
+    
+}
+
+.join_room_button:hover{
+   
+    background: rgba(49, 67, 184, 0.5);
+    color: white;
+}
+
+.create_room_button:hover{
+   
+    background: rgba(49, 67, 184, 0.5);
+    color: white;
+}

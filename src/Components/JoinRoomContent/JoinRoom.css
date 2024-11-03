@@ -1,0 +1,57 @@
+.connecting_buttons_container2{
+    width: 30%;
+    height: 47%;
+    border: 1px solid blue;
+    border-radius: 8px;
+    text-align: center;
+    /* margin-left: 28%; */
+    /* display: flex; */
+    /* flex-direction: column; */
+    justify-content: center;
+    align-items: center;
+    /* position: absolute; */
+    padding-bottom: 24px;
+    z-index: 2;
+}
+
+.secondpage_container{
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.heading_second_page{
+
+    height: 7vh;
+    border-radius: 7px;
+    font-size: larger;
+    font-family: cursive;
+    /* border: 1px solid blue; */
+    margin-bottom: 35px;
+    background: rgb(208 214 255 / 50%);
+}
+
+.join_room_input{
+
+    width: 80%;
+    height: 7vh;
+    border-radius: 7px;
+    font-size: larger;
+    font-family: cursive;
+    border: 1px solid blue;
+    margin-bottom: 35px;
+    background: rgb(208 214 255 / 50%);
+}
+
+.btn_second_page{
+    width: 80%;
+    height: 6vh;
+    border-radius: 7px;
+    font-size: larger;
+    font-family: cursive;
+    border: 1px solid blue;
+    margin-bottom: 35px;
+    background: rgb(208 214 255 / 50%);
+}
