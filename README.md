@@ -8,9 +8,6 @@ install nodemodules:
 
         npm install
 
-Navigate to the frontend folder:
-
-        cd frontend
 
 Start the frontend development server:
 
