@@ -3,20 +3,17 @@
 
 // import React from 'react'
 
-
-
 // import { useEffect, useRef, useState } from 'react'
 // import io from 'socket.io-client';
 //  import Video from './video/Video';
 // import Videos from './video/Videos';
 // // import "./App.css"
-// //const socket = io.connect('http://localhost:8080');  
+// //const socket = io.connect('http://localhost:8080');
 
 // const VideoElement = () => {
 //   const [localStream, setLocalStream] = useState(null);
 //   // const local = useRef();
 //   // const remoteVideoRef = useRef();
-
 
 //   const [remoteStream, setRemoteStream] = useState(null);
 //   const [remoteStreams, setRemoteStreams] = useState([]);
@@ -200,7 +197,6 @@
 //           .catch(error => console.error('Error adding ice candidate:', error));
 //       }
 //     });
-    
 
 //     return () => {
 //       // Clean-up logic here
@@ -212,18 +208,13 @@
 //     setSelectedVideo(_video);
 //   };
 
-
-
-
-
-
 //   const statusText = <div style={{ color: 'yellow', padding: 5 }}>{status}</div>
 
 //   return (
 //     <>
-   
+
 //     {/* <button onClick={()=>{getUserMedia()}}>Get access to microphone and video</button> */}
- 
+
 //    {/* <div className="video-container"> */}
 //   <Video styles={{zIndex: '2',
 //     position: 'absolute',
@@ -234,8 +225,7 @@
 
 //     <Video
 //           styles={{
-            
-            
+
 //             width: '100%',
 //             height: '95% ',
 //             // backgroundColor: 'black'
@@ -269,13 +259,11 @@
 //   <button className='btn-vc2' onClick={createAnswer}>Accept</button> */}
 //    {/* </div> */}
 
-  
 // <br />
 // {/* <textarea ref={textRef}></textarea> */}
 // <br />
 // {/* <button onClick={setRemoteDescription}>Set Remote Description</button>
 // <button onClick={addCandidate}>Add Candidates</button> */}
-
 
 //   </>
 //   );
@@ -283,33 +271,29 @@
 
 // export default VideoElement;
 
+import React, { useRef, useEffect } from "react";
 
-import React , { useRef, useEffect } from 'react';
+const VideoElement = ({ videoStream, styles, isLocal, displayText }) => {
+  const videoRef = useRef(null);
+  console.log(": ", videoStream);
+  useEffect(() => {
+    if (videoStream && videoRef.current) {
+      !isLocal
+        ? (videoRef.current.srcObject = videoStream.stream)
+        : (videoRef.current.srcObject = videoStream);
+    }
+  }, [videoStream]);
 
-
-const VideoElement = ({ videoStream, styles ,isLocal, displayText}) => {
-
- const videoRef = useRef(null);
-console.log(": ",videoStream)
-useEffect(() => {
-  if (videoStream && videoRef.current) {
-    !isLocal ? videoRef.current.srcObject = videoStream.stream : videoRef.current.srcObject = videoStream
-  }
-}, [videoStream]);
-
-
-  return ( <div className='videoElement'>
-   <video  className='videoElement1' id={!isLocal && videoStream ? videoStream.id : ''}  ref={videoRef} autoPlay></video>
-   {!videoStream && (
-        <h2 className='videoElementText'>
-          {displayText}
-        </h2>
-      )}
-  
-     </div>
-
-     
-  
+  return (
+    <div className="videoElement">
+      <video
+        className="videoElement1"
+        id={!isLocal && videoStream ? videoStream.id : ""}
+        ref={videoRef}
+        autoPlay
+      ></video>
+      {!videoStream && <h2 className="videoElementText">{displayText}</h2>}
+    </div>
   );
 };
 
