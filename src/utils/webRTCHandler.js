@@ -1,8 +1,13 @@
 import * as wss from "./wss";
-import Peer from 'simple-peer'
-import store from '../store/store';
-import { setLocalVideoRef, setRemoteVideoRef,removeRemoteVideoRef,setMessages,setSummary} from '../store/actions';
-
+import Peer from "simple-peer";
+import store from "../store/store";
+import {
+  setLocalVideoRef,
+  setRemoteVideoRef,
+  removeRemoteVideoRef,
+  setMessages,
+  setSummary,
+} from "../store/actions";
 
 const constraints = {
   audio: true,
@@ -12,40 +17,34 @@ const constraints = {
   },
 };
 
-
 let localStream;
 
 export const getLocalPreviewAndInitRoomConnection = async (
   isRoomHost,
   identity,
-  roomId = null,
- 
-) =>{
+  roomId = null
+) => {
   navigator.mediaDevices
-  .getUserMedia(constraints)
-  .then((stream) => {
-    console.log("successfuly received local stream");
-    localStream = stream;
-    showLocalVideoPreview(localStream);
+    .getUserMedia(constraints)
+    .then((stream) => {
+      console.log("successfuly received local stream");
+      localStream = stream;
+      showLocalVideoPreview(localStream);
 
-    isRoomHost
-    ? wss.createNewRoom(identity)
-    : wss.joinRoom(identity, roomId);
-  }
-  )
+      isRoomHost ? wss.createNewRoom(identity) : wss.joinRoom(identity, roomId);
+    })
     .catch((err) => {
       console.log(
         "error occurred when trying to get an access to local stream"
       );
       console.log(err);
     });
-
-}
+};
 
 let peers = {};
-let streams=[]
+let streams = [];
 
-const getConfiguration = ()=>{
+const getConfiguration = () => {
   console.warn("Using only STUN server");
   return {
     iceServers: [
@@ -54,58 +53,53 @@ const getConfiguration = ()=>{
       },
     ],
   };
-}
-
+};
 
 const messengerChannel = "messenger";
 
-
 //prepare a  peeer connection with the joined user with connUserSocketId
-export const prepareNewPeerConnection = (connUserSocketId,isInitiator)=>{
-  
-  console.log(`Preparing new peer connection with ${connUserSocketId}, Initiator: ${isInitiator}`);
+export const prepareNewPeerConnection = (connUserSocketId, isInitiator) => {
+  console.log(
+    `Preparing new peer connection with ${connUserSocketId}, Initiator: ${isInitiator}`
+  );
   const configuration = getConfiguration();
-  console.log("configuratioon is : ",configuration)
+  console.log("configuratioon is : ", configuration);
   peers[connUserSocketId] = new Peer({
     initiator: isInitiator,
     config: configuration,
     stream: localStream,
-   
   });
-  console.log("peer object : ",peers)
+  console.log("peer object : ", peers);
+  console.log("local stream is : ");
+  console.log(localStream.getAudioTracks());
 
   peers[connUserSocketId].on("signal", (data) => {
     console.log(`Sending signal data to ${connUserSocketId}`);
-  const signalData = {
-    signal: data,
-    connUserSocketId: connUserSocketId,
-    channelName: messengerChannel,
-  };
+    const signalData = {
+      signal: data,
+      connUserSocketId: connUserSocketId,
+      channelName: messengerChannel,
+    };
 
-  wss.signalPeerData(signalData);
-});
+    wss.signalPeerData(signalData);
+  });
 
-  
-  peers[connUserSocketId].on('stream',(stream)=>{
+  peers[connUserSocketId].on("stream", (stream) => {
     console.log(`Received stream from ${connUserSocketId}`);
-    addStream(stream,connUserSocketId)
-    streams = [...streams,stream]
-  })
+    addStream(stream, connUserSocketId);
+    streams = [...streams, stream];
+  });
 
   peers[connUserSocketId].on("data", (data) => {
     const messageData = JSON.parse(data);
-    console.log("Message adtaa is : ",messageData)
-    if(messageData.identity==="admin"){
+    console.log("Message adtaa is : ", messageData);
+    if (messageData.identity === "admin") {
       store.dispatch(setSummary(messageData.content));
-    }
-    else
-    {
-    appendNewMessage(messageData);
+    } else {
+      appendNewMessage(messageData);
     }
   });
-
 };
-
 
 export const handleSignalingData = (data) => {
   //add signaling data to peer connection
@@ -125,11 +119,11 @@ export const removePeerConnection = (data) => {
     tracks.forEach((t) => t.stop());
 
     videoEl.srcObject = null;
-     videoContainer.removeChild(videoEl);
-    console.log("object set to null")
-     videoContainer.parentNode.removeChild(videoContainer);
+    videoContainer.removeChild(videoEl);
+    console.log("object set to null");
+    videoContainer.parentNode.removeChild(videoContainer);
     //store.dispatch(removeRemoteVideoRef(socketId));
-    console.log("thas remved")
+    console.log("thas remved");
     if (peers[socketId]) {
       peers[socketId].destroy();
     }
@@ -159,37 +153,33 @@ const showLocalVideoPreview = (stream) => {
 
   videoContainer.appendChild(videoElement);
 
-  
-
   videosContainer.appendChild(videoContainer);
 };
 
-const addStream = (stream,connUserSocketId)=>{
- //display incoming stream
- console.log(`Adding stream from ${connUserSocketId}`);
- const videosContainer = document.getElementById("videos_portal");
- const videoContainer = document.createElement("div");
- videoContainer.id = connUserSocketId;
+const addStream = (stream, connUserSocketId) => {
+  //display incoming stream
+  console.log(`Adding stream from ${connUserSocketId}`);
+  const videosContainer = document.getElementById("videos_portal");
+  const videoContainer = document.createElement("div");
+  videoContainer.id = connUserSocketId;
 
- videoContainer.classList.add("video_track_container");
- const videoElement = document.createElement("video");
- videoElement.classList.add("videoElement1");
- videoElement.autoplay = true;
- videoElement.srcObject = stream;
- videoElement.id = `${connUserSocketId}-video`;
- //console.log("remote video at webrtc is :",stream)
- //store.dispatch(setRemoteVideoRef(stream,connUserSocketId));
- videoElement.onloadedmetadata = () => {
-   videoElement.play();
- };
+  videoContainer.classList.add("video_track_container");
+  const videoElement = document.createElement("video");
+  videoElement.classList.add("videoElement1");
+  videoElement.autoplay = true;
+  videoElement.srcObject = stream;
+  videoElement.id = `${connUserSocketId}-video`;
+  //console.log("remote video at webrtc is :",stream)
+  //store.dispatch(setRemoteVideoRef(stream,connUserSocketId));
+  videoElement.onloadedmetadata = () => {
+    videoElement.play();
+  };
 
- videoContainer.appendChild(videoElement);
- videosContainer.appendChild(videoContainer);
-
-}
+  videoContainer.appendChild(videoElement);
+  videosContainer.appendChild(videoContainer);
+};
 
 ////buttons logic////
-
 
 export const toggleMic = (isMuted) => {
   localStream.getAudioTracks()[0].enabled = isMuted ? true : false;
@@ -203,13 +193,11 @@ export const toggleCamera = (isDisabled) => {
 
 const appendNewMessage = (messageData) => {
   const messages = store.getState().messages;
-  console.log("Messages in store",messages)
+  console.log("Messages in store", messages);
   store.dispatch(setMessages([...messages, messageData]));
-  console.log("After updation Messages in store",messages)
-}
-;
-
-export const sendMessageUsingDataChannel = (messageContent,identity) => {
+  console.log("After updation Messages in store", messages);
+};
+export const sendMessageUsingDataChannel = (messageContent, identity) => {
   // append this message locally
   // const identity = store.getState().identity;
 
@@ -219,9 +207,11 @@ export const sendMessageUsingDataChannel = (messageContent,identity) => {
     messageCreatedByMe: true,
   };
 
-  console.log(`local meassage data created by ${identity} ${localMessageData.content}`)
+  console.log(
+    `local meassage data created by ${identity} ${localMessageData.content}`
+  );
   appendNewMessage(localMessageData);
-  
+
   const messageData = {
     content: messageContent,
     identity,
@@ -233,11 +223,7 @@ export const sendMessageUsingDataChannel = (messageContent,identity) => {
   }
 };
 
-
-
-
-
-export const sendSummaryUsingDataChannel = (messageContent,identity) => {
+export const sendSummaryUsingDataChannel = (messageContent, identity) => {
   // append this message locally
   // const identity = store.getState().identity;
 
@@ -248,7 +234,7 @@ export const sendSummaryUsingDataChannel = (messageContent,identity) => {
   // };
   // console.log(`local meassage data created by ${identity} ${localMessageData.content}`)
   // appendNewMessage(localMessageData);
-  
+
   const messageData = {
     content: messageContent,
     identity,
