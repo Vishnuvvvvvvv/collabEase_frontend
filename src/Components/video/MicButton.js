@@ -1,13 +1,25 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import MicButtonImg from "../../assets/mic.svg";
 import MicButtonImgOff from "../../assets/micOff.svg";
 import * as webRTCHandler from "../../utils/webRTCHandler";
+import userContext from "../userContext";
 
 const MicButton = () => {
-  const [isMicMuted, setIsMicMuted] = useState(false);
-
+  const [isMicMuted, setIsMicMuted] = useState(true);
+  const {
+    roomId,
+    isRoomHost,
+    setIsRoomHost,
+    identity,
+    setIdentity,
+    setRoomId,
+    participants,
+    setParticipants,
+    socketId,
+    setSocketId,
+  } = useContext(userContext);
   const handleMicButtonPressed = () => {
-    webRTCHandler.toggleMic(isMicMuted);
+    webRTCHandler.toggleMic(!isMicMuted, socketId, roomId);
 
     setIsMicMuted(!isMicMuted);
   };

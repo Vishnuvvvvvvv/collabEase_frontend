@@ -24,7 +24,8 @@ export const connectWithSocketIOServer = (contextValues) => {
   socket.on("connect", () => {
     console.log("successfully connected with socket io server");
     console.log(socket.id);
-    setSocketId(socket.id);
+    // setSocketId(socket.id);
+    setSocketId(socket);
   });
 
   //from server after creating a room we'll get rrom id back
@@ -36,6 +37,7 @@ export const connectWithSocketIOServer = (contextValues) => {
   socket.on("room-update", (data) => {
     const { connectedUsers } = data;
     console.log("added participant");
+    console.log("updated room users : ", connectedUsers);
     setParticipants(connectedUsers);
   });
   //we got from server that a pper is asking to prepare for connection

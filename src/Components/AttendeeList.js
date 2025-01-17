@@ -5,6 +5,7 @@ import startIcon from "../assets/icons8-record-50.png";
 import stopIcon from "../assets/stop.png";
 import axios from "axios";
 import { useAudioRecorder } from "react-audio-voice-recorder";
+import { serverIP } from "../apiConfig";
 const AttendeeList = ({
   roomId,
   participants,
@@ -48,6 +49,22 @@ const AttendeeList = ({
 
   console.log("recording status", recordingActive);
 
+  // const process = (arr) => {
+  //   let result = "";
+  //   for (let obj of arr) {
+  //     result += "Speaker " + obj.speaker + " : " + obj.text + "<br />";
+  //   }
+  //   setTranscription(result);
+  // };
+  const process = (arr) => {
+    return arr.map((obj, index) => (
+      <div key={index}>
+        Speaker {obj.speaker}: {obj.text}
+        <br />
+      </div>
+    ));
+  };
+
   useEffect(() => {
     if (recordingBlob) {
       // Do something with the recordingBlob, like save it or send it to the server
@@ -57,7 +74,8 @@ const AttendeeList = ({
       setIsPreparingTranscript("Preparing Transcript");
       axios
         .post(
-          "https://9018-34-82-118-146.ngrok-free.app/transcribe",
+          // "https://9018-34-82-118-146.ngrok-free.app/transcribe",
+          `${serverIP}/multi-transcribe`,
           formData,
           {
             headers: {
@@ -67,6 +85,12 @@ const AttendeeList = ({
         )
         .then((response) => {
           setIsPreparingTranscript(false);
+
+          // setTranscription(response.data.transcript);
+
+          //-------- new changes -----
+
+          // const processedResult = process(response.data.transcript);
           setTranscription(response.data.transcript);
           console.log("Transcription ready");
         })
