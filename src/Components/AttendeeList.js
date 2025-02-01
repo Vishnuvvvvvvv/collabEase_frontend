@@ -30,7 +30,7 @@ const AttendeeList = ({
   // const [transcript, setTranscript] = useState('');
   const [recordingActive, setRecordingActive] = useState(false);
   //const [name,setName] = useState(['Jacob Samuel','Abraham Issac','Joshua P','Peter Domnic','Paul Augustine','John Manuel'])
-  const { isRoomHost } = useContext(userContext);
+  const { isRoomHost, socketId } = useContext(userContext);
 
   //  const {
   //   startRecording,
@@ -145,6 +145,8 @@ const AttendeeList = ({
       .catch((error) => {
         console.error("Error stopping audio recording:", error);
       });
+
+    socketId.emit("clearActiveSpeakerArray");
   };
 
   const nameEl = participants.map((item) => {
@@ -191,6 +193,7 @@ const AttendeeList = ({
                 disabled={isRecording}
                 // onClick={startRecording}
                 onClick={() => {
+                  socketId.emit("clearActiveSpeakerArray");
                   startAudioRecording();
                   setButtonText("Recording");
                 }}
