@@ -11,15 +11,142 @@ import {
 import { useContext, useEffect } from "react";
 import userContext from "../Components/userContext";
 
-const constraints = {
-  audio: true,
-  video: {
-    width: "580",
-    height: "500",
-  },
-};
+// const constraints = {
+//   audio: true,
+//   video: {
+//     width: "580",
+//     height: "500",
+//   },
+// };
 
 let localStream;
+let peers = {};
+let streams = [];
+// ================================================================================
+// =====================================================start=======================================
+// ===========================================================================================================
+// export const getLocalPreviewAndInitRoomConnection = async (
+//   isRoomHost,
+//   identity,
+//   roomId = null
+// ) => {
+//   navigator.mediaDevices
+//     .getUserMedia(constraints)
+//     .then((stream) => {
+//       console.log("successfuly received local stream");
+//       localStream = stream;
+//       localStream.getAudioTracks()[0].enabled = false;
+//       showLocalVideoPreview(localStream);
+
+//       isRoomHost ? wss.createNewRoom(identity) : wss.joinRoom(identity, roomId);
+//     })
+//     .catch((err) => {
+//       console.log(
+//         "error occurred when trying to get an access to local stream"
+//       );
+//       console.log(err);
+//     });
+// };
+
+// const getConfiguration = () => {
+//   console.warn("Using only STUN server");
+//   return {
+//     iceServers: [
+//       {
+//         urls: "stun:stun.l.google.com:19302",
+//       },
+//     ],
+//   };
+// };
+
+// const messengerChannel = "messenger";
+
+// //prepare a  peeer connection with the joined user with connUserSocketId
+// export const prepareNewPeerConnection = (connUserSocketId, isInitiator) => {
+//   console.log(
+//     `Preparing new peer connection with ${connUserSocketId}, Initiator: ${isInitiator}`
+//   );
+//   const configuration = getConfiguration();
+//   console.log("configuratioon is : ", configuration);
+//   peers[connUserSocketId] = new Peer({
+//     initiator: isInitiator,
+//     config: configuration,
+//     stream: localStream,
+//   });
+//   console.log("peer object : ", peers);
+//   console.log("local stream is : ");
+//   console.log(localStream.getAudioTracks());
+
+//   peers[connUserSocketId].on("signal", (data) => {
+//     console.log(`Sending signal data to ${connUserSocketId}`);
+//     const signalData = {
+//       signal: data,
+//       connUserSocketId: connUserSocketId,
+//       channelName: messengerChannel,
+//     };
+
+//     wss.signalPeerData(signalData);
+//   });
+
+//   // ==================new=========================
+
+//   // ======================new==========================
+
+//   peers[connUserSocketId].on("stream", (stream) => {
+//     console.log(`Received stream from ${connUserSocketId}`);
+//     addStream(stream, connUserSocketId);
+//     streams = [...streams, stream];
+//     // const state = store.getState(); // Get the current Redux state
+//     // const userName = state.username;
+//     // ----------new
+//     // Check if the audio track is enabled and update active streams
+//     // updateActiveAudioStreams();
+//     console.log("checking....");
+
+//     // stream.getAudioTracks().forEach((track) => {
+//     //   if (track.enabled) {
+//     //     // Ensure the remote stream is not added multiple times
+//     //     if (!activeAudioStreams.includes(stream)) {
+//     //       activeAudioStreams.push(stream);
+//     //     } // Add stream to activeAudioStreams if audio track is enabled
+//     //   }
+//     // });
+
+//     // -----------
+//     // monitorAudioLevel(stream, connUserSocketId, userName, connUserSocketId);
+//   });
+
+//   peers[connUserSocketId].on("data", (data) => {
+//     const messageData = JSON.parse(data);
+//     console.log("Message adtaa is : ", messageData);
+//     if (messageData.identity === "admin") {
+//       store.dispatch(setSummary(messageData.content));
+//     } else {
+//       appendNewMessage(messageData);
+//     }
+//   });
+// };
+
+// ===================================================================================================================
+// =======================================================finidh===================================================================
+// ================================================================================================================================
+
+const constraints = {
+  audio: {
+    autoGainControl: false,
+    channelCount: 2,
+    echoCancellation: false,
+    latency: 0,
+    noiseSuppression: false,
+    sampleRate: 48000,
+    sampleSize: 16,
+    volume: 1.0,
+  },
+  video: {
+    width: 580,
+    height: 500,
+  },
+};
 
 export const getLocalPreviewAndInitRoomConnection = async (
   isRoomHost,
@@ -44,37 +171,44 @@ export const getLocalPreviewAndInitRoomConnection = async (
     });
 };
 
-let peers = {};
-let streams = [];
-
 const getConfiguration = () => {
-  console.warn("Using only STUN server");
   return {
     iceServers: [
+      { urls: "stun:stun.l.google.com:19302" },
       {
-        urls: "stun:stun.l.google.com:19302",
+        urls: "turn:your-turn-server.com",
+        username: "user",
+        credential: "pass",
       },
     ],
   };
 };
 
 const messengerChannel = "messenger";
-
-//prepare a  peeer connection with the joined user with connUserSocketId
 export const prepareNewPeerConnection = (connUserSocketId, isInitiator) => {
-  console.log(
-    `Preparing new peer connection with ${connUserSocketId}, Initiator: ${isInitiator}`
-  );
   const configuration = getConfiguration();
-  console.log("configuratioon is : ", configuration);
+
   peers[connUserSocketId] = new Peer({
     initiator: isInitiator,
     config: configuration,
     stream: localStream,
+    sdpTransform: (sdp) => {
+      console.log("Original SDP:", sdp);
+
+      // // Force Opus codec for audio
+      // sdp = sdp.replace(/a=fmtp:\d+ .*\r\n/g, ""); // Remove existing fmtp lines
+      // sdp = sdp.replace(
+      //   /a=rtpmap:\d+ opus\/48000\/2\r\n/g,
+      //   "a=rtpmap:111 opus/48000/2\r\na=fmtp:111 maxplaybackrate=48000; stereo=1; useinbandfec=1\r\n"
+      // );
+
+      // // Set audio bitrate to 64 kbps (or higher for better quality)
+      // sdp = sdp.replace(/a=mid:audio\r\n/g, "a=mid:audio\r\nb=AS:64\r\n");
+
+      // console.log("Modified SDP:", sdp);
+      return sdp;
+    },
   });
-  console.log("peer object : ", peers);
-  console.log("local stream is : ");
-  console.log(localStream.getAudioTracks());
 
   peers[connUserSocketId].on("signal", (data) => {
     console.log(`Sending signal data to ${connUserSocketId}`);
@@ -87,86 +221,14 @@ export const prepareNewPeerConnection = (connUserSocketId, isInitiator) => {
     wss.signalPeerData(signalData);
   });
 
-  // new function for helping recording audio
-  let activeAudioStreams = []; // Array to hold active audio tracks for recording
-  let mediaRecorder;
-  let recordedChunks = [];
-
-  const startRecording = () => {
-    if (activeAudioStreams.length === 0) {
-      console.log("No active audio streams to record.");
-      return;
-    }
-
-    // Combine all active audio tracks into a single MediaStream
-    const combinedStream = new MediaStream();
-    activeAudioStreams.forEach((stream) => {
-      stream
-        .getAudioTracks()
-        .forEach((track) => combinedStream.addTrack(track));
-    });
-
-    // Initialize MediaRecorder
-    mediaRecorder = new MediaRecorder(combinedStream);
-
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        recordedChunks.push(event.data);
-      }
-    };
-
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(recordedChunks, { type: "audio/webm" });
-      const url = URL.createObjectURL(blob);
-      console.log("Recording complete. Downloading file...");
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = "recording.webm";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    };
-
-    mediaRecorder.start();
-    console.log("Recording started...");
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-      console.log("Recording stopped.");
-    } else {
-      console.log("No active recording to stop.");
-    }
-  };
-
-  const updateActiveAudioStreams = () => {
-    activeAudioStreams = streams.filter((stream) =>
-      stream.getAudioTracks().some((track) => track.enabled)
-    );
-    console.log("Updated active audio streams:", activeAudioStreams);
-  };
-
-  //
-
   peers[connUserSocketId].on("stream", (stream) => {
     console.log(`Received stream from ${connUserSocketId}`);
     addStream(stream, connUserSocketId);
     streams = [...streams, stream];
-    // const state = store.getState(); // Get the current Redux state
-    // const userName = state.username;
-    // ----------new
-    // Check if the audio track is enabled and update active streams
-    updateActiveAudioStreams();
-    console.log("checking....");
-    // -----------
-    // monitorAudioLevel(stream, connUserSocketId, userName, connUserSocketId);
   });
 
   peers[connUserSocketId].on("data", (data) => {
     const messageData = JSON.parse(data);
-    console.log("Message adtaa is : ", messageData);
     if (messageData.identity === "admin") {
       store.dispatch(setSummary(messageData.content));
     } else {
@@ -175,6 +237,147 @@ export const prepareNewPeerConnection = (connUserSocketId, isInitiator) => {
   });
 };
 
+//   // ==================new=========================
+
+//   // ======================new==========================
+
+//   peers[connUserSocketId].on("stream", (stream) => {
+//     console.log(`Received stream from ${connUserSocketId}`);
+//     addStream(stream, connUserSocketId);
+//     streams = [...streams, stream];
+//     // const state = store.getState(); // Get the current Redux state
+//     // const userName = state.username;
+//     // ----------new
+//     // Check if the audio track is enabled and update active streams
+//     // updateActiveAudioStreams();
+//     console.log("checking....");
+
+//     // stream.getAudioTracks().forEach((track) => {
+//     //   if (track.enabled) {
+//     //     // Ensure the remote stream is not added multiple times
+//     //     if (!activeAudioStreams.includes(stream)) {
+//     //       activeAudioStreams.push(stream);
+//     //     } // Add stream to activeAudioStreams if audio track is enabled
+//     //   }
+//     // });
+
+//     // -----------
+//     // monitorAudioLevel(stream, connUserSocketId, userName, connUserSocketId);
+//   });
+
+//   peers[connUserSocketId].on("data", (data) => {
+//     const messageData = JSON.parse(data);
+//     console.log("Message adtaa is : ", messageData);
+//     if (messageData.identity === "admin") {
+//       store.dispatch(setSummary(messageData.content));
+//     } else {
+//       appendNewMessage(messageData);
+//     }
+//   });
+// };
+
+// -------------------new-------------
+let mediaRecorder;
+let recordedChunks = [];
+var audioContext2;
+let destination;
+
+export const startAudioRecording = () => {
+  // Create an AudioContext and a destination node
+  audioContext2 = new AudioContext();
+  destination = audioContext2.createMediaStreamDestination();
+
+  // Function to connect a stream's audio tracks to the destination
+  const connectStreamToDestination = (stream) => {
+    if (stream.getAudioTracks().length > 0) {
+      const source = audioContext2.createMediaStreamSource(stream);
+      source.connect(destination);
+    }
+  };
+
+  // Connect local audio tracks
+  if (localStream && localStream.getAudioTracks().length > 0) {
+    connectStreamToDestination(localStream);
+  }
+
+  // Connect remote audio tracks
+  streams.forEach((stream) => {
+    connectStreamToDestination(stream);
+  });
+
+  // Create a MediaRecorder for the mixed audio stream
+  mediaRecorder = new MediaRecorder(destination.stream);
+
+  mediaRecorder.ondataavailable = (event) => {
+    if (event.data.size > 0) {
+      recordedChunks.push(event.data);
+    }
+  };
+
+  // mediaRecorder.onstop = () => {
+  //   const audioBlob = new Blob(recordedChunks, { type: "audio/wav" });
+  //   const audioURL = URL.createObjectURL(audioBlob);
+
+  //   // Download the recording
+  //   const a = document.createElement("a");
+  //   a.style.display = "none";
+  //   a.href = audioURL;
+  //   a.download = "meeting-recording.wav";
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   window.URL.revokeObjectURL(audioURL);
+
+  //   // Clean up
+  //   recordedChunks = [];
+  //   if (audioContext2) {
+  //     audioContext2.close();
+  //   }
+
+  // };
+
+  mediaRecorder.start();
+  console.log("Audio recording started");
+};
+
+// export const stopAudioRecording = () => {
+//   if (mediaRecorder && mediaRecorder.state !== "inactive") {
+//     mediaRecorder.stop();
+//     console.log("Audio recording stopped");
+//   }
+// };
+// -------------------new-------------
+
+// =====++++++++modified++++++++++=================
+export const stopAudioRecording = () => {
+  return new Promise((resolve, reject) => {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(recordedChunks, { type: "audio/wav" });
+        console.log("Audio recording stopped");
+
+        // Clean up
+        recordedChunks = [];
+        if (audioContext2) {
+          audioContext2.close();
+        }
+
+        // Resolve the promise with the audioBlob
+        resolve(audioBlob);
+      };
+
+      mediaRecorder.onerror = (error) => {
+        console.error("Error during recording:", error);
+        reject(error);
+      };
+
+      mediaRecorder.stop();
+    } else {
+      reject(new Error("MediaRecorder is not active or already stopped."));
+    }
+  });
+};
+
+// ++++++++++modeifie end +===================================
 export const handleSignalingData = (data) => {
   //add signaling data to peer connection
   console.log(`Handling signaling data from ${data.connUserSocketId}`);
@@ -323,10 +526,14 @@ export const toggleMic = (isMuted, socketId, roomId) => {
 
   if (isMuted) {
     stopAudioAnalyzer();
+
+    console.log("Mic muted. Local stream removed from activeAudioStreams.");
   } else {
+    // Add localStream to activeAudioStreams if unmuted
+
     const state = store.getState(); // Get the current Redux state
     const userName = state.username;
-    // updateActiveAudioStreams();
+    //  updateActiveAudioStreams();
     monitorAudioLevel(localStream, userName, socketId, roomId);
 
     // startAudioAnalyzer(localStream, roomId, userName);
@@ -372,17 +579,6 @@ export const sendMessageUsingDataChannel = (messageContent, identity) => {
 };
 
 export const sendSummaryUsingDataChannel = (messageContent, identity) => {
-  // append this message locally
-  // const identity = store.getState().identity;
-
-  // const localMessageData = {
-  //   content: messageContent,
-  //   identity,
-  //   messageCreatedByMe: true,
-  // };
-  // console.log(`local meassage data created by ${identity} ${localMessageData.content}`)
-  // appendNewMessage(localMessageData);
-
   const messageData = {
     content: messageContent,
     identity,

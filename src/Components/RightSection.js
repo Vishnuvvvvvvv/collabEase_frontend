@@ -130,8 +130,13 @@ function RightSection({
                 image={loadImageIcon}
               />
             ) : showTranscription ? (
-              <p className="transcription">{transcription}</p>
+              transcription.split("\n").map((line, index) => (
+                <p className="transcription" key={index}>
+                  {line}
+                </p>
+              ))
             ) : (
+              // <p className="transcription">{transcription}</p>
               <div className="summary-content">
                 <p className="transcription">
                   {loading ? (

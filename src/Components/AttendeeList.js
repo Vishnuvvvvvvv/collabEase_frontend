@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./AttendeeList.css";
 import profilePic from "../assets/avatar.png";
 import startIcon from "../assets/icons8-record-50.png";
@@ -6,6 +6,12 @@ import stopIcon from "../assets/stop.png";
 import axios from "axios";
 import { useAudioRecorder } from "react-audio-voice-recorder";
 import { serverIP } from "../apiConfig";
+import {
+  startAudioRecording,
+  stopAudioRecording,
+} from "../utils/webRTCHandler";
+import userContext from "./userContext";
+
 const AttendeeList = ({
   roomId,
   participants,
@@ -24,6 +30,7 @@ const AttendeeList = ({
   // const [transcript, setTranscript] = useState('');
   const [recordingActive, setRecordingActive] = useState(false);
   //const [name,setName] = useState(['Jacob Samuel','Abraham Issac','Joshua P','Peter Domnic','Paul Augustine','John Manuel'])
+  const { isRoomHost } = useContext(userContext);
 
   //  const {
   //   startRecording,
@@ -91,6 +98,7 @@ const AttendeeList = ({
           //-------- new changes -----
 
           // const processedResult = process(response.data.transcript);
+
           setTranscription(response.data.transcript);
           console.log("Transcription ready");
         })
@@ -100,6 +108,44 @@ const AttendeeList = ({
         });
     }
   }, [recordingBlob]);
+
+  const stopClicked = () => {
+    setButtonText("REC");
+    stopAudioRecording()
+      .then((audioBlob) => {
+        console.log("Recording complete. Blob ready to use.", audioBlob);
+
+        // Example: Sending the Blob to an API
+        const formData = new FormData();
+        formData.append("audio_file", audioBlob);
+        setIsPreparingTranscript("Preparing Transcript");
+        axios
+          .post(`${serverIP}/multi-transcribe`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response) => {
+            setIsPreparingTranscript(false);
+
+            // setTranscription(response.data.transcript);
+
+            //-------- new changes -----
+
+            // const processedResult = process(response.data.transcript);
+
+            setTranscription(response.data.transcript);
+            console.log("Transcription ready");
+          })
+          .catch((error) => {
+            console.error("Error transcribing audio:", error);
+            setIsPreparingTranscript("Error in Transcribing...");
+          });
+      })
+      .catch((error) => {
+        console.error("Error stopping audio recording:", error);
+      });
+  };
 
   const nameEl = participants.map((item) => {
     return (
@@ -122,6 +168,8 @@ const AttendeeList = ({
       });
   };
 
+  const [buttonText, setButtonText] = useState("REC");
+
   return (
     <>
       {" "}
@@ -135,49 +183,53 @@ const AttendeeList = ({
         {/* <p>Recording time: {recordingTime} seconds</p> */}
         {/* <p>Status: {isRecording ? 'Recording' : isPaused ? 'Paused' : 'Idle'}</p> */}
 
-        <div className="attendee-btn-container">
-          {!isRecording ? (
-            <div
-              className="attendee-start-btn"
-              disabled={isRecording}
-              onClick={startRecording}
-            >
-              {" "}
-              <img
-                className="attendee-start-icon"
-                src={startIcon}
-                alt=""
-                srcset=""
-              />{" "}
-              REC{" "}
-            </div>
-          ) : (
+        {isRoomHost && (
+          <div className="attendee-btn-container">
+            {!isRecording ? (
+              <div
+                className="attendee-start-btn"
+                disabled={isRecording}
+                // onClick={startRecording}
+                onClick={() => {
+                  startAudioRecording();
+                  setButtonText("Recording");
+                }}
+              >
+                <img
+                  className="attendee-start-icon"
+                  src={startIcon}
+                  alt=""
+                  srcset=""
+                />
+                {buttonText}
+              </div>
+            ) : (
+              <div
+                className="attendee-stop-btn"
+                onClick={togglePauseResume}
+                disabled={!isRecording}
+              >
+                {isPaused ? "Resume" : "Pause"}
+              </div>
+            )}
             <div
               className="attendee-stop-btn"
-              onClick={togglePauseResume}
               disabled={!isRecording}
+              onClick={() => {
+                // stopRecording();
+                stopClicked();
+              }}
             >
-              {" "}
-              {isPaused ? "Resume" : "Pause"}{" "}
+              <img
+                className="attendee-stop-icon"
+                src={stopIcon}
+                alt=""
+                srcset=""
+              />
+              STOP
             </div>
-          )}
-          <div
-            className="attendee-stop-btn"
-            disabled={!isRecording}
-            onClick={() => {
-              stopRecording();
-            }}
-          >
-            {" "}
-            <img
-              className="attendee-stop-icon"
-              src={stopIcon}
-              alt=""
-              srcset=""
-            />{" "}
-            STOP{" "}
           </div>
-        </div>
+        )}
       </div>
     </>
   );
