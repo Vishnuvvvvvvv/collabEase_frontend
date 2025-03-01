@@ -1,6 +1,9 @@
 import React, { useContext, useState } from "react";
-import MicButtonImg from "../../assets/mic.svg";
-import MicButtonImgOff from "../../assets/micOff.svg";
+// import MicButtonImg from "../../assets/mic.svg";
+// import MicButtonImgOff from "../../assets/micOff.svg";
+import MicButtonImg from "../../assets/sidebar/Microphone.png";
+import MicButtonImgOff from "../../assets/sidebar/mute.png";
+
 import * as webRTCHandler from "../../utils/webRTCHandler";
 import userContext from "../userContext";
 
@@ -25,13 +28,13 @@ const MicButton = () => {
   };
 
   return (
-    <div className="video_button_container">
-      <img
-        src={isMicMuted ? MicButtonImgOff : MicButtonImg}
-        onClick={handleMicButtonPressed}
-        className="video_button_image"
-      />
-    </div>
+    // <div className="video_button_container">
+    <img
+      src={isMicMuted ? MicButtonImgOff : MicButtonImg}
+      onClick={handleMicButtonPressed}
+      className="video_button_image"
+    />
+    // </div>
   );
 };
 

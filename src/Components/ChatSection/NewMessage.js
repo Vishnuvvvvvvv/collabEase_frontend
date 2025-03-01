@@ -1,11 +1,22 @@
-import React, { useState,useContext } from "react";
-import SendMessageButton from "../../assets/sendMessageButton.svg";
+import React, { useState, useContext } from "react";
+import SendMessageButton from "../../assets/sidebar/SendMessage.png";
 import * as webRTCHandler from "../../utils/webRTCHandler";
 import userContext from "../userContext";
 
 const NewMessage = () => {
   const [message, setMessage] = useState("");
-  const { roomId,isRoomHost, setIsRoomHost, identity, setIdentity,setRoomId, participants, setParticipants, socketId, setSocketId } = useContext(userContext);
+  const {
+    roomId,
+    isRoomHost,
+    setIsRoomHost,
+    identity,
+    setIdentity,
+    setRoomId,
+    participants,
+    setParticipants,
+    socketId,
+    setSocketId,
+  } = useContext(userContext);
   const handleTextChange = (event) => {
     setMessage(event.target.value);
   };
@@ -21,8 +32,8 @@ const NewMessage = () => {
 
   const sendMessage = () => {
     if (message.length > 0) {
-      console.log("Sended meassage successfully")
-      webRTCHandler.sendMessageUsingDataChannel(message,identity);
+      console.log("Sended meassage successfully");
+      webRTCHandler.sendMessageUsingDataChannel(message, identity);
       setMessage("");
     }
   };

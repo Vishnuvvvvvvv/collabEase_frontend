@@ -1,4 +1,5 @@
 import React from "react";
+import Exit from "../../assets/sidebar/Exit.png";
 
 const LeaveRoomButton = () => {
   const handleRoomDisconnection = () => {
@@ -7,11 +8,11 @@ const LeaveRoomButton = () => {
   };
 
   return (
-    <div className="video_button_container">
-      <button className="video_button_end" onClick={handleRoomDisconnection}>
-        Leave Room
-      </button>
-    </div>
+    <img
+      src={Exit}
+      onClick={handleRoomDisconnection}
+      className="video_button_end"
+    />
   );
 };
 

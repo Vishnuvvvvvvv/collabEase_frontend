@@ -8,6 +8,7 @@ import { useAudioRecorder } from "react-audio-voice-recorder";
 import userContext from "./Components/userContext";
 import * as webRTCHandler from "./utils/webRTCHandler";
 import { startAudioRecording, stopAudioRecording } from "./utils/webRTCHandler";
+import SideBar from "./Components/SideBar/SideBar";
 
 function RoomPage() {
   const {
@@ -21,6 +22,12 @@ function RoomPage() {
     setParticipants,
     socketId,
     setSocketId,
+    transcription,
+    setTranscription,
+    isPreparingTranscript,
+    setIsPreparingTranscript,
+    isRecording,
+    setIsRecording,
   } = useContext(userContext);
   console.log("Identity at room page ", identity);
 
@@ -39,15 +46,15 @@ function RoomPage() {
     stopRecording,
     togglePauseResume,
     recordingBlob,
-    isRecording,
+    // isRecording,
     isPaused,
     recordingTime,
     mediaRecorder,
   } = useAudioRecorder();
 
-  const [isPreparingTranscript, setIsPreparingTranscript] = useState(false);
+  // const [isPreparingTranscript, setIsPreparingTranscript] = useState(false);
   const [count, setCount] = useState(0);
-  const [transcription, setTranscription] = useState();
+  // const [transcription, setTranscription] = useState();
 
   return (
     <div className="main-body">
@@ -63,10 +70,12 @@ function RoomPage() {
       />
 
       <div className="body">
+        <SideBar />
+
         <div className="video-conferencing">
           <VideoConference />
-          <button onClick={startAudioRecording}>Start Recording</button>
-          <button onClick={stopAudioRecording}>Stop Recording</button>
+          {/* <button onClick={startAudioRecording}>Start Recording</button>
+          <button onClick={stopAudioRecording}>Stop Recording</button> */}
         </div>
 
         <div className="participants-section">

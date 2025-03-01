@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./RightSection.css";
 import pause from "../assets/pause.png";
 import stop from "../assets/stop.png";
@@ -26,6 +26,12 @@ function RightSection({
   const [loading, setLoading] = useState(false);
   const [showTranscription, setShowTranscription] = useState(true);
   const [showLiveComponent, setShowLiveComponent] = useState(false);
+
+  useEffect(() => {
+    console.log("value of transcription is : ", showTranscription);
+    console.log("hy there ");
+  }, []);
+
   const fetchSummary = async () => {
     try {
       setLoading(true);

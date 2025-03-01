@@ -1,0 +1,29 @@
+.SideBar {
+  width: 8%;
+  background-color: #ffffff;
+  border-radius: 50px;
+  /* border: 1px solid black; */
+  margin-left: 20px;
+  height: 93vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  transform: translateY(-5%);
+  box-shadow: 0px 5px 9px rgba(0, 0, 0, 0.7);
+}
+
+.startRec:hover {
+  padding: 15px;
+  transition: 0.3s;
+}
+
+.stopRec:hover {
+  padding: 15px;
+  transition: 0.3s;
+}
+
+.transcript:hover {
+  padding: 15px;
+  transition: 0.3s;
+}

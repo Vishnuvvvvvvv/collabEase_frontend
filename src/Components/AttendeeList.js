@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./AttendeeList.css";
-import profilePic from "../assets/avatar.png";
+import profilePic from "../assets/sidebar/person.png";
 import startIcon from "../assets/icons8-record-50.png";
 import stopIcon from "../assets/stop.png";
 import axios from "axios";
@@ -145,8 +145,6 @@ const AttendeeList = ({
       .catch((error) => {
         console.error("Error stopping audio recording:", error);
       });
-
-    socketId.emit("clearActiveSpeakerArray");
   };
 
   const nameEl = participants.map((item) => {
@@ -154,11 +152,19 @@ const AttendeeList = ({
       <>
         <div key={item.identity} className="attendee-name">
           <img className="prf-img" src={profilePic} alt="" srcset="" />
-          <h3> {item.identity} </h3>
+          <h3
+            style={{
+              fontFamily: " monospace",
+              letterSpacing: "4px",
+            }}
+          >
+            {item.identity}
+          </h3>
         </div>
       </>
     );
   });
+
   const copyRoomIdToClipboard = (roomId) => {
     navigator.clipboard
       .writeText(roomId)
@@ -175,9 +181,9 @@ const AttendeeList = ({
   return (
     <>
       {" "}
-      <button onClick={() => copyRoomIdToClipboard(roomId)}>
+      {/* <button onClick={() => copyRoomIdToClipboard(roomId)}>
         Copy Room ID
-      </button>
+      </button> */}
       <div className="attendeeList">
         {/* Recording time: {recordingTime} seconds <br /><br /> */}
         {nameEl}
@@ -185,7 +191,7 @@ const AttendeeList = ({
         {/* <p>Recording time: {recordingTime} seconds</p> */}
         {/* <p>Status: {isRecording ? 'Recording' : isPaused ? 'Paused' : 'Idle'}</p> */}
 
-        {isRoomHost && (
+        {/* {isRoomHost && (
           <div className="attendee-btn-container">
             {!isRecording ? (
               <div
@@ -206,7 +212,8 @@ const AttendeeList = ({
                 />
                 {buttonText}
               </div>
-            ) : (
+            )
+            : (
               <div
                 className="attendee-stop-btn"
                 onClick={togglePauseResume}
@@ -232,7 +239,7 @@ const AttendeeList = ({
               STOP
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </>
   );
