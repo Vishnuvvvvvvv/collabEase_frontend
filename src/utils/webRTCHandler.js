@@ -222,7 +222,7 @@ export const prepareNewPeerConnection = (connUserSocketId, isInitiator) => {
   });
 
   peers[connUserSocketId].on("stream", (stream) => {
-    console.log(`Received stream from ${connUserSocketId}`);
+    console.log(`1.Received stream from ${connUserSocketId}`);
     addStream(stream, connUserSocketId);
     streams = [...streams, stream];
   });
@@ -473,6 +473,13 @@ const stopAudioAnalyzer = () => {
 };
 
 const monitorAudioLevel = (stream, userName, socket, roomId) => {
+  console.log("monitor audio level from ", userName, " called");
+
+  if (!stream || !stream.getAudioTracks().length) {
+    console.log(`No audio tracks available for ${userName}`);
+    return;
+  }
+
   audioContext = new AudioContext();
   source = audioContext.createMediaStreamSource(stream);
   analyser = audioContext.createAnalyser();
@@ -484,23 +491,30 @@ const monitorAudioLevel = (stream, userName, socket, roomId) => {
   source.connect(analyser);
   let isCurrentlySpeaking = false;
   const checkAudioLevel = () => {
-    if (!analyser) return;
-    analyser.getByteFrequencyData(dataArray);
+    console.log("checking audio level");
+    if (!analyser) {
+      console.log("returning..");
+      return;
+    }
 
+    console.log("passed 1");
+    analyser.getByteFrequencyData(dataArray);
+    console.log("passed 2");
     // Compute the average volume
     const volume =
       dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
-
+    console.log("passed 3");
     // Threshold for detecting active speaker
-    const threshold = 50; // Adjust as needed
+    const threshold = 15; // Adjust as needed
     // console.log("volume is ", volume);
+    console.log("volume is ", volume);
     if (volume > threshold) {
-      console.log(`Active speaker detected: ${socket}`);
+      console.log(`Active speaker detected: ${socket}--${userName}`);
 
       if (!isCurrentlySpeaking) {
         // User just started speaking, notify the backend
         console.log(`Active speaker: ${userName}`);
-
+        console.log("emitting speaking event to backend");
         socket.emit("speaking", { roomId: roomId, name: userName });
 
         isCurrentlySpeaking = true;
@@ -523,6 +537,7 @@ const monitorAudioLevel = (stream, userName, socket, roomId) => {
 export const toggleMic = (isMuted, socketId, roomId) => {
   localStream.getAudioTracks()[0].enabled = isMuted ? false : true;
   // Update active streams when mic is toggled
+  console.log("toggle mic : clicked: localStream.audiotrack is", !isMuted);
 
   if (isMuted) {
     stopAudioAnalyzer();
@@ -530,7 +545,7 @@ export const toggleMic = (isMuted, socketId, roomId) => {
     console.log("Mic muted. Local stream removed from activeAudioStreams.");
   } else {
     // Add localStream to activeAudioStreams if unmuted
-
+    console.log("mic unmuted ,sending to monitor audio level");
     const state = store.getState(); // Get the current Redux state
     const userName = state.username;
     //  updateActiveAudioStreams();

@@ -22,6 +22,7 @@ const MicButton = () => {
     setSocketId,
   } = useContext(userContext);
   const handleMicButtonPressed = () => {
+    console.log("mic button is pressed");
     webRTCHandler.toggleMic(!isMicMuted, socketId, roomId);
 
     setIsMicMuted(!isMicMuted);
